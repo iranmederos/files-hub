@@ -1,0 +1,58 @@
+services:
+  db:
+    image: mysql:8.0.35
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: iranda
+    ports:
+      - "3308:3306"
+    networks:
+      - hub-network
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/dev.DockerFile
+    working_dir: /iranda
+    volumes:
+      - .:/iranda
+    links:
+      - db
+    expose:
+      - 3000
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - hub-network
+
+  nginx:
+    build:
+      context: ./docker/nginx/
+      dockerfile: DockerFile
+    links:
+      - api
+    expose:
+      - 80
+    ports:
+      - '${TOP_LEVEL_PORT}:${TOP_LEVEL_PORT}'
+    networks:
+      - hub-network
+    environment:
+        - TOP_LEVEL_PORT=${TOP_LEVEL_PORT}
+        - TOP_LEVEL_PORT=8080
+        - API_PROTOCOL=http
+
+volumes:
+  db:
+
+networks:
+  hub-network:
+    name: hub-network
