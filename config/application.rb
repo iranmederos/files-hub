@@ -11,7 +11,7 @@ module FilesHub
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
-    config.i18n.default_locale = 'es'
+    config.i18n.default_locale = :en
 
     config.active_record.schema_format = :sql
 

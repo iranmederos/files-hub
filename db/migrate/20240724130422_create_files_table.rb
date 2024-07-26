@@ -1,6 +1,6 @@
 class CreateFilesTable < ActiveRecord::Migration[7.1]
   def change
-    create_table :files do |t|
+    create_table :company_files do |t|
       t.string :name, null: false
       t.string :file, null: false
       t.string :file_type, null: false
