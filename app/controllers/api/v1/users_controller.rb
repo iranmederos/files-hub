@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::BaseController
-  before_action :authenticate_user!, only: [:create]
-  before_action :authorize_user!, except: [:create, :index, :show]
+  before_action :authenticate_user!
+  before_action :authorize_user!, except: [:show]
 
   expose :user
 
@@ -17,7 +17,6 @@ class Api::V1::UsersController < Api::V1::BaseController
       render_error "Not Found"
     end
   end
-
 
   def create
     if user.create(user_params)
@@ -47,10 +46,5 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def user_params
     params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation)
-  end
-
-  def authorize_user!
-    return if current_user.has_role?(:admin)
-    render_error "Unauthorized"
   end
 end

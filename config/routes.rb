@@ -9,6 +9,18 @@ Rails.application.routes.draw do
 
       resources :roles, only: %i[index]
 
+      resources :company do
+        collection do
+          get 'index_by_user', to: 'company#index_by_user'
+        end
+      end
+
+      resources :company_file do
+        collection do
+          get 'index_by_company', to: 'company_file#index_by_company'
+        end
+      end
+
     end
   end
 
