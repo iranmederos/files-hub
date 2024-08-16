@@ -2,14 +2,16 @@ class Api::V1::CompanyController < Api::V1::BaseController
   before_action :authenticate_user!
   before_action :authorize_user!, except: [:index_by_user]
 
-  expose :company
+  expose :company, find: ->(id, scope) { scope.find_by(id: id) }
+  expose :companies, -> { Company.where(user_id: params[:user_id]) }
+  expose :new_company, -> { Company.new(company_params) }
 
   def index
     render_scoped_list(Company, V1::CompanyBlueprint)
   end
 
   def index_by_user
-    if (companies = Company.where(user_id: params[:user_id]))
+    if companies
       render_success V1::CompanyBlueprint.render(companies)
     else
       render_error "Not Found"
@@ -25,7 +27,7 @@ class Api::V1::CompanyController < Api::V1::BaseController
   end
 
   def create
-    if Company.create(company_params)
+    if new_company.save
       render_success V1::CompanyBlueprint.render(company)
     else
       render_error V1::CompanyBlueprint.render(company)
@@ -33,11 +35,10 @@ class Api::V1::CompanyController < Api::V1::BaseController
   end
 
   def update
-    if (company = Company.update(company_params))
-      company.save
+    if company.update(company_params)
       render_success V1::CompanyBlueprint.render(company)
     else
-      render_error V1::CompanyBlueprint.render(company)
+      render_error company.errors.full_messages.to_sentence
     end
   end
 

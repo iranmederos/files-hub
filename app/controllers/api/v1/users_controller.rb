@@ -2,9 +2,8 @@ class Api::V1::UsersController < Api::V1::BaseController
   before_action :authenticate_user!
   before_action :authorize_user!, except: [:show]
 
-  expose :user
-
-  has_scope :by_email, as: :email
+  expose :user, find: ->(id, scope) { scope.find_by(id: id) }
+  expose :new_user, -> { User.new(user_params) }
 
   def index
     render_scoped_list(User, V1::UserBlueprint)
@@ -19,7 +18,7 @@ class Api::V1::UsersController < Api::V1::BaseController
   end
 
   def create
-    if user.create(user_params)
+    if new_user.save
       render_success V1::UserBlueprint.render(user)
     else
       render_error V1::UserBlueprint.render(user)
