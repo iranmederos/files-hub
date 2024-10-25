@@ -1,0 +1,14 @@
+# DOCKER COMPOSE VARIABLES
+TOP_LEVEL_DOMAIN=localhost
+TOP_LEVEL_PORT=8020
+APPS=buy,sell,backoffice,api
+APPS_SUFFIX=
+API_PROTOCOL=http
+
+# RAILS VARIABLES
+API_KEY=4NO4eJ4k3MrmzcLPE0DfVyiqwvrPXNVi
+DATABASE_URL=mysql2://root:iranda@db:3306/ip_development?encoding=utf8mb4&collation=utf8mb4_unicode_ci&pool=5&timeout=5000&useUnicode=true&;characterEncoding=UTF-8
+DEVISE_JWT_SECRET_KEY=08ef4d2e659bcc73091326ab9697c3f90f0de46157aa954bd813e96b5e03c968d8428219e8c8a367fe6a3ad7e2548203922a1747ca89233915b3d52d45b15371
+HONEYBADGER_API_KEY=hbp_snBzJsyTkeWEq6bDROpysYFRGLnuuz2t9gU8
+RAILS_ENVIRONMENT=development
+RAILS_LOG_TO_STDOUT=true

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # mount Sidekiq::Web => "/sidekiq", as: 'sidekiq_web'
   namespace :api do
     namespace :v1 do
+      get 'login', to: 'authentication#new'
       post 'login', to: 'authentication#login'
       get 'auto_login', to: 'authentication#auto_login'
 

@@ -47,8 +47,7 @@ services:
       - hub-network
     environment:
         - TOP_LEVEL_PORT=${TOP_LEVEL_PORT}
-        - TOP_LEVEL_PORT=8080
-        - API_PROTOCOL=http
+        - API_PROTOCOL=${API_PROTOCOL}
 
 volumes:
   db:

@@ -26,6 +26,10 @@ function _build_run_down {
   docker compose down
 }
 
+function _run {
+  docker compose run ${TTY} "${@}"
+}
+
 # -----------------------------------------------------------------------------
 
 function cmd {
@@ -69,7 +73,7 @@ function redis-cli {
 
 function bundle:install {
   # Install Ruby dependencies and write out a lock file
-  _build_run_down web bundle install
+  _build_run_down api bundle install
 }
 
 function bundle:outdated {

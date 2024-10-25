@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!, except: %i[login]
+  before_action :authenticate_user!, except: %i[login new]
 
   private
 
