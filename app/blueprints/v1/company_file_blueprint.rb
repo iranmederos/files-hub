@@ -3,7 +3,17 @@
 class V1::CompanyFileBlueprint < Blueprinter::Base
   identifier :id
 
-  fields :name, :file, :file_type, :created_at, :updated_at
+  fields :name, :file, :file_type, :created_at
 
-  association :company, blueprint: V1::CompanyBlueprint
+  field :updated_at do |company_file|
+    company_file&.updated_at.in_time_zone('America/Caracas').strftime('%d/%m/%Y - %H:%M:%S')
+  end
+
+  field :company_id do |company_file|
+    company_file.company_id
+  end
+
+  field :institution_id do |company_file|
+    company_file.institution_id
+  end
 end
