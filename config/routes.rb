@@ -7,8 +7,8 @@ Rails.application.routes.draw do
       get 'auto_login', to: 'authentication#auto_login'
 
       resources :users
-
       resources :roles, only: %i[index]
+      resources :institution
 
       resources :company do
         collection do
@@ -18,10 +18,9 @@ Rails.application.routes.draw do
 
       resources :company_file do
         collection do
-          get 'index_by_company', to: 'company_file#index_by_company'
+          get 'index_by', to: 'company_file#index_by'
         end
       end
-
     end
   end
 
