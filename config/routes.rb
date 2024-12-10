@@ -24,5 +24,5 @@ Rails.application.routes.draw do
     end
   end
 
-  root to: proc { [200, {}, ['Welcome to IRANPLAZ API']] }
+  root 'home#index'
 end
