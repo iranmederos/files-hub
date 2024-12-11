@@ -1,19 +1,19 @@
 # db/seeds.rb
 
-# Ensure the existence of the admin and client roles
+# Ensure the existence of the dashboard and client roles
 if !Role.exists?
   Role.create!([
-                 { name: "admin" },
+                 { name: "dashboard" },
                  { name: "client" }
                ])
-  admin_role = Role.find_or_create_by!(name: "admin")
+  admin_role = Role.find_or_create_by!(name: "dashboard")
   client_role = Role.find_or_create_by!(name: "client")
 end
 
-# Ensure the existence of the admin user
-unless User.exists?(email: "admin@example.com") && User.exists?(email: "client@example.com")
-  admin_email = "admin@example.com"
-  admin_password = "admin"
+# Ensure the existence of the dashboard user
+unless User.exists?(email: "dashboard@example.com") && User.exists?(email: "client@example.com")
+  admin_email = "dashboard@example.com"
+  admin_password = "dashboard"
 
   User.find_or_create_by!(email: admin_email) do |user|
     user.password = admin_password
