@@ -1,8 +1,9 @@
 import { Application } from "@hotwired/stimulus"
-import HelloController from "./hello_controller"
+import DashboardController from "./dashboard_controller"
+import LoginController from "./login_controller";
 const application = Application.start()
-application.register("hello", HelloController)
-
+application.register("dashboard", DashboardController)
+application.register("login", LoginController)
 // Configure Stimulus development experience
 application.debug = false
 window.Stimulus   = application

@@ -24,8 +24,8 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'home#login'
-  get 'dashboard', to: 'dashboard#index'
+  root 'login#login'
+  get 'dashboard', to: 'dashboard#dashboard'
   get 'manage_users', to: 'dashboard#manage_users'
   get 'manage_files', to: 'dashboard#manage_files'
   get 'options', to: 'dashboard#options'
