@@ -3,9 +3,9 @@
 class User < ApplicationRecord
   has_secure_password
 
-  has_many :user_roles
+  has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
-  has_many :companies
+  has_many :companies, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
   validates :password, presence: true
