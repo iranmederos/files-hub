@@ -1,8 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class ManageUsersController extends Controller {
-    static targets = ["bodyTable", "addForm", "editForm", "deleteForm"]
+    static targets = ["bodyTable", "addForm", "editForm", "deleteForm"];
+    API_URL = "api/v1/users/"
     idDelete = null;
+
 
     connect() {
         if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
@@ -25,7 +27,7 @@ export default class ManageUsersController extends Controller {
     }
 
     async deleteUser() {
-        const url = `api/v1/users/${this.idDelete}`;
+        const url = `${this.API_URL}${this.idDelete}`;
         const response = await fetch(url, {
             method: 'DELETE',
             headers: {
@@ -52,7 +54,7 @@ export default class ManageUsersController extends Controller {
         };
         let id = form.querySelector('#userIdEdit').value;
 
-        const url = `api/v1/users/${id}`;
+        const url = `${this.API_URL}${id}`;
         const response = await fetch(url, {
             method: 'PUT',
             body: JSON.stringify({user: editedUser}),
@@ -82,7 +84,7 @@ export default class ManageUsersController extends Controller {
     async addUser() {
         event.preventDefault();
         const addUser = this.getDataForAddModal();
-        const url = `api/v1/users`;
+        const url = this.API_URL;
         const response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({user: addUser}),
@@ -134,7 +136,7 @@ export default class ManageUsersController extends Controller {
     }
 
     async getUsers() {
-        const url = `api/v1/users`;
+        const url = this.API_URL;
         const response = await fetch(url, {
             method: 'GET',
             headers: {
