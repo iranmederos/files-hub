@@ -44,7 +44,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#fetchAgregarUsuario" data-manage-users-target="addForm">
+          <form data-action="submit->manage-users#addUser" data-manage-users-target="addForm">
             <div class="mb-3">
               <label for="userNameAdd" class="form-label">Nombre</label>
               <input type="text" class="form-control" id="userNameAdd" placeholder="Ingrese el nombre" required>
@@ -79,7 +79,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#fetchEditarUsuario" data-manage-users-target="editForm">
+          <form data-action="submit->manage-users#editUser" data-manage-users-target="editForm">
             <div class="mb-3">
               <label for="userIdEdit" class="form-label">ID</label>
               <input type="text" class="form-control" id="userIdEdit" readonly>
@@ -118,7 +118,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#fetchEliminarUsuario" data-manage-users-target="deleteForm">
+          <form data-action="submit->manage-users#deleteUser" data-manage-users-target="deleteForm">
             <h3>¿Estas seguro de eliminar?</h3>
             <div class="modal-footer">
               <button type="submit" class="btn btn-danger">Eliminar</button>

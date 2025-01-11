@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class ManageUsersController extends Controller {
     static targets = ["bodyTable", "addForm", "editForm", "deleteForm"]
+    idDelete = null;
 
     connect() {
         if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
@@ -12,7 +13,7 @@ export default class ManageUsersController extends Controller {
         this.token = localStorage.getItem('token');
         this.id = localStorage.getItem('id');
 
-        this.fetchUsuarios().then(data => {
+        this.getUsers().then(data => {
             this.fillTable(data);
         });
     }
@@ -20,12 +21,11 @@ export default class ManageUsersController extends Controller {
     getIdFromTable(event) {
         const button = event.currentTarget;
         const row = button.parentElement.parentElement;
-        return row.cells[0].textContent;
+        this.idDelete = row.cells[0].textContent;
     }
 
-    async fetchEliminarUsuario() {
-        let id = this.getIdFromTable(event);
-        const url = `api/v1/users/${id}`;
+    async deleteUser() {
+        const url = `api/v1/users/${this.idDelete}`;
         const response = await fetch(url, {
             method: 'DELETE',
             headers: {
@@ -41,7 +41,7 @@ export default class ManageUsersController extends Controller {
         }
     }
 
-    async fetchEditarUsuario() {
+    async editUSer() {
         event.preventDefault();
         const form = this.editFormTarget;
         const editedUser = {
@@ -79,11 +79,13 @@ export default class ManageUsersController extends Controller {
         document.getElementById('userEmailEdit').value = row.cells[3].textContent;
     }
 
-    async fetchAgregarUsuario(usuario) {
+    async addUser() {
+        event.preventDefault();
+        const addUser = this.getDataForAddModal();
         const url = `api/v1/users`;
         const response = await fetch(url, {
             method: 'POST',
-            body: JSON.stringify(usuario),
+            body: JSON.stringify({user: addUser}),
             headers: {
                 'Authorization': 'Bearer ' + this.token,
                 'Content-Type': 'application/json'
@@ -95,6 +97,16 @@ export default class ManageUsersController extends Controller {
         } else {
             alert('Error al agregar usuario');
         }
+    }
+
+    getDataForAddModal() {
+        const form = this.addFormTarget;
+        return  {
+            first_name: form.querySelector('#userNameAdd').value,
+            last_name: form.querySelector('#userLastNameAdd').value,
+            email: form.querySelector('#userEmailAdd').value,
+            password: form.querySelector('#userPasswordAdd').value
+        };
     }
 
     fillTable(users) {
@@ -113,7 +125,7 @@ export default class ManageUsersController extends Controller {
                 <td>
                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                         data-bs-target="#userModalEdit" data-action="click->manage-users#getDataForEditModal">Editar</button>
-                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-action="click->manage-users#getIdFromTable"
                         data-bs-target="#userModalDelete">Eliminar</button>
                 </td>
             </tr>
@@ -121,7 +133,7 @@ export default class ManageUsersController extends Controller {
         });
     }
 
-    async fetchUsuarios() {
+    async getUsers() {
         const url = `api/v1/users`;
         const response = await fetch(url, {
             method: 'GET',
