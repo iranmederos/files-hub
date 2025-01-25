@@ -3,13 +3,7 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   before_action :authorize_user!
 
   expose :company_file, find: ->(id, scope) { scope.find_by(id: id) }
-  expose :company_files, -> {
-    if params[:institution_id].present?
-      CompanyFile.by_company_and_institution(params[:company_id], params[:institution_id])
-    else
-      CompanyFile.where(company_id: params[:company_id])
-    end
-  }
+  expose :company_files, -> { finder_with_params(params) }
   expose :new_company_file, -> { CompanyFile.new(company_file_params) }
 
   def index
@@ -33,10 +27,11 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   end
 
   def create
-    if new_company_file.save!
-      render_success V1::CompanyFileBlueprint.render(company_file)
+    new_company_file.file.attach(params[:company_file][:file])
+    if new_company_file.save
+      render json: { message: "File uploaded successfully", file: new_company_file }, status: :created
     else
-      render_error V1::CompanyFileBlueprint.render(company_file)
+      render json: { errors: new_company_file.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -57,6 +52,14 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   end
 
   private
+
+  def finder_with_params(params)
+    if params[:institution_id].present?
+      CompanyFile.by_company_and_institution(params[:company_id], params[:institution_id])
+    else
+      CompanyFile.where(company_id: params[:company_id])
+    end
+  end
 
   def company_file_params
     params.require(:company_file).permit(:name, :file, :file_type, :company_id, :institution_id)
