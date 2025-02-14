@@ -88,7 +88,6 @@ DROP TABLE IF EXISTS `company_files`;
 CREATE TABLE `company_files` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `file` varchar(255) NOT NULL,
   `file_type` varchar(255) NOT NULL,
   `company_id` bigint DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
@@ -197,6 +196,7 @@ CREATE TABLE `users` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO `schema_migrations` (version) VALUES
+('20250126173242'),
 ('20250123210256'),
 ('20241025161615'),
 ('20241025161516'),

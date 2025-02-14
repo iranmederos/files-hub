@@ -26,12 +26,28 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
     end
   end
 
+  def download
+    if company_file.file.attached?
+      send_data company_file.file.download, filename: company_file.name, type: company_file.file.content_type, disposition: 'attachment'
+    else
+      render_error "File not found"
+    end
+  end
+
+  def show_file
+    if company_file.file.attached?
+      send_data company_file.file.download, filename: company_file.name, type: company_file.file.content_type, disposition: 'inline'
+    else
+      render_error "File not found"
+    end
+  end
+
   def create
     new_company_file.file.attach(params[:company_file][:file])
     if new_company_file.save
-      render json: { message: "File uploaded successfully", file: new_company_file }, status: :created
+      render_success V1::CompanyFileBlueprint.render(new_company_file)
     else
-      render json: { errors: new_company_file.errors.full_messages }, status: :unprocessable_entity
+      render_error V1::CompanyFileBlueprint.render(new_company_file)
     end
   end
 

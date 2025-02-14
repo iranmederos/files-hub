@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       resources :company_file do
         collection do
           get 'index_by', to: 'company_file#index_by'
+          get 'download/:id', to: 'company_file#download'
+          get 'show_file/:id', to: 'company_file#show_file'
         end
       end
     end
