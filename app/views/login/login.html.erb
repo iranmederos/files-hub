@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= stylesheet_link_tag 'login', media: 'all', 'data-turbo-track': 'reload' %>
+  <title>FilesHub</title>
+</head>
+<body>
+<div class="login-container" data-controller="login">
+  <%= image_tag 'logo.jpg', alt: 'logo', width: 150, height: 150 %> <br>
+  <h3>LOGIN</h3>
+  <form id="loginForm" action="" method="post" data-action="submit->login#login">
+    <input id="email" type="text" name="email" placeholder="Email" required data-login-target="email">
+    <input id="password" type="password" name="password" placeholder="Password" required data-login-target="password">
+    <p id="error-message" hidden="true" data-login-target="errorMessage">Credenciales incorrectas</p>
+    <button type="submit">INGRESAR</button>
+  </form>
+</div>
+</body>
+</html>

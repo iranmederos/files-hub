@@ -1,9 +1,9 @@
-# frozen_string_literal: true
-
 class V1::CompanyFileBlueprint < Blueprinter::Base
+  include Rails.application.routes.url_helpers
+
   identifier :id
 
-  fields :name, :file, :file_type, :created_at
+  fields :name, :file_type, :created_at
 
   field :updated_at do |company_file|
     company_file&.updated_at.in_time_zone('America/Caracas').strftime('%d/%m/%Y - %H:%M:%S')

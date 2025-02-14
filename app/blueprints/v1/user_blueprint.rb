@@ -2,7 +2,7 @@
 
 class V1::UserBlueprint < Blueprinter::Base
   identifier :id
-  fields :email, :first_name, :last_name
+  fields :email, :first_name, :last_name, :created_at
 
   association :roles, blueprint: V1::RoleBlueprint
 

@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!, except: %i[login auto_login]
+  #before_action :authenticate_user!, except: %i[login auto_login]
 
   private
 
