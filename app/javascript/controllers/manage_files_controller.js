@@ -24,7 +24,7 @@ export default class ManageFilesController extends Controller {
 
         this.token = localStorage.getItem('token');
         this.id = localStorage.getItem('id');
-        this.idToDelete = 0;
+        this.idDelete = 0;
 
         this.init();
     }
@@ -89,13 +89,13 @@ export default class ManageFilesController extends Controller {
                     <td>${file.id}</td>
                     <td>${file.name}</td>
                     <td>${file.file_type}</td>
-                    <td>${file.institution}</td>
+                    <td>${file.institution_id}</td>
                     <td>${file.updated_at}</td>
                     <td>
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalEdit" data-action="click->manager-files#getDataForEditModal">Editar</button>
+                            data-bs-target="#fileModalEdit" data-action="click->manage-files#getDataForEditModal">Editar</button>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalDelete" data-action="click->manager-files#getIdFromTable">Eliminar</button>
+                            data-bs-target="#fileModalDelete" data-action="click->manage-files#getIdFromTable">Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -155,22 +155,22 @@ export default class ManageFilesController extends Controller {
 
     getIdFromTable(event) {
         const button = event.currentTarget;
-        const row = button.closest('tr');
-        this.idToDelete = row.cells[0].textContent;
+        const row = button.parentElement.parentElement;
+        this.idDelete = row.cells[0].textContent;
     }
 
     async addFile(event) {
         event.preventDefault();
 
         const formData = new FormData();
-        formData.append('name', this.addFormTarget.fileNameAdd.value);
-        formData.append('file_type', this.addFormTarget.typeAdd.value);
-        formData.append('institution_id', this.addFormTarget.institutionDropdownAdd.value);
-        formData.append('company_id', this.companyDropdownTarget.value);
+        formData.append('company_file[name]', this.addFormTarget.fileNameAdd.value);
+        formData.append('company_file[file_type]', this.addFormTarget.typeAdd.value);
+        formData.append('company_file[institution_id]', this.addFormTarget.institutionDropdownAdd.value);
+        formData.append('company_file[company_id]', this.companyDropdownTarget.value);
 
         const fileInput = document.getElementById('fileInput');
         if (fileInput.files.length > 0) {
-            formData.append('file', fileInput.files[0]);
+            formData.append('company_file[file]', fileInput.files[0]);
         }
 
         await this.postAddFile(formData);
@@ -226,7 +226,7 @@ export default class ManageFilesController extends Controller {
 
     async deleteFile(event) {
         event.preventDefault();
-        await this.requestDeleteFile(this.idToDelete);
+        await this.requestDeleteFile(this.idDelete);
         const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalDelete'));
         modal.hide();
         window.location.reload();

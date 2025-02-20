@@ -4,19 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion Usuario</title>
+  <title>Gestion de Empresas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body data-controller="manage-users">
+<body data-controller="manage-companies">
 <div class="container mt-5">
-  <h1 class="text-center">Gestión de Usuarios</h1>
+  <h1 class="text-center">Gestión de Empresas</h1>
   <a href="/dashboard.html" class="btn btn-primary mt-3">Volver al Dashboard</a>
 
   <div class="card mt-4">
     <div class="card-header">
-      <h4>Lista de Usuarios</h4>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModalAdd">Agregar Usuario</button>
+      <h4>Lista de Empresas</h4>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#companyModalAdd">Agregar Empresa</button>
     </div>
     <div class="card-body">
       <table class="table table-striped">
@@ -24,42 +24,42 @@
         <tr>
           <th>#</th>
           <th>Nombre</th>
-          <th>Apellido</th>
           <th>Email</th>
-          <th>Fecha de alta</th>
+          <th>Telefono</th>
+          <th>Usuario</th>
           <th>Acciones</th>
         </tr>
         </thead>
-        <tbody data-manage-users-target="bodyTable">
+        <tbody data-manage-companies-target="bodyTable">
         </tbody>
       </table>
     </div>
   </div>
 
-  <div class="modal fade" id="userModalAdd" tabindex="-1" aria-labelledby="userModalLabelAdd" aria-hidden="true">
+  <div class="modal fade" id="companyModalAdd" tabindex="-1" aria-labelledby="companyModalLabelAdd" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="userModalLabelAdd">Agregar Usuario</h5>
+          <h5 class="modal-title" id="companyModalLabelAdd">Agregar Empresa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#addUser" data-manage-users-target="addForm">
+          <form data-action="submit->manage-companies#addCompany" data-manage-companies-target="addForm">
             <div class="mb-3">
-              <label for="userNameAdd" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="userNameAdd" placeholder="Ingrese el nombre" required>
+              <label for="companyNameAdd" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="companyNameAdd" placeholder="Ingrese el nombre" required>
             </div>
             <div class="mb-3">
-              <label for="userLastNameAdd" class="form-label">Apellido</label>
-              <input type="text" class="form-control" id="userLastNameAdd" placeholder="Ingrese el apellido" required>
+              <label for="companyEmailAdd" class="form-label">Email</label>
+              <input type="text" class="form-control" id="companyEmailAdd" placeholder="Ingrese el email" required>
             </div>
             <div class="mb-3">
-              <label for="userEmailAdd" class="form-label">Email</label>
-              <input type="text" class="form-control" id="userEmailAdd" placeholder="Ingrese el email" required>
+              <label for="companyPhoneAdd" class="form-label">Telefono</label>
+              <input type="text" class="form-control" id="companyPhoneAdd" placeholder="Ingrese el telefono" required>
             </div>
             <div class="mb-3">
-              <label for="userPasswordAdd" class="form-label">Contraseña</label>
-              <input type="text" class="form-control" id="userPasswordAdd" placeholder="Ingrese la contraseña" required>
+              <label for="companyUserAdd" class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="companyUserAdd" required>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -71,34 +71,34 @@
     </div>
   </div>
 
-  <div class="modal fade" id="userModalEdit" tabindex="-1" aria-labelledby="userModalLabelEdit" aria-hidden="true">
+  <div class="modal fade" id="companyModalEdit" tabindex="-1" aria-labelledby="companyModalLabelEdit" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="userModalLabelEdit">Editar Usuario</h5>
+          <h5 class="modal-title" id="companyModalLabelEdit">Editar Empresa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#editUser" data-manage-users-target="editForm">
+          <form data-action="submit->manage-companies#editCompany" data-manage-companies-target="editForm">
             <div class="mb-3">
-              <label for="userIdEdit" class="form-label">ID</label>
-              <input type="text" class="form-control" id="userIdEdit" readonly>
+              <label for="companyIdEdit" class="form-label">ID</label>
+              <input type="text" class="form-control" id="companyIdEdit" readonly>
             </div>
             <div class="mb-3">
-              <label for="userNameEdit" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="userNameEdit" placeholder="Ingrese el nombre" required>
+              <label for="companyNameEdit" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="companyNameEdit" placeholder="Ingrese el nombre" required>
             </div>
             <div class="mb-3">
-              <label for="userLastNameEdit" class="form-label">Apellido</label>
-              <input type="text" class="form-control" id="userLastNameEdit" placeholder="Ingrese el apellido" required>
+              <label for="companyEmailEdit" class="form-label">Email</label>
+              <input type="text" class="form-control" id="companyEmailEdit" placeholder="Ingrese el email" required>
             </div>
             <div class="mb-3">
-              <label for="userEmailEdit" class="form-label">Email</label>
-              <input type="text" class="form-control" id="userEmailEdit" placeholder="Ingrese el email" required>
+              <label for="companyPhoneEdit" class="form-label">Phone</label>
+              <input type="text" class="form-control" id="companyPhoneEdit" placeholder="Ingrese el telefono" required>
             </div>
             <div class="mb-3">
-              <label for="userPasswordEdit" class="form-label">Contraseña</label>
-              <input type="text" class="form-control" id="userPasswordEdit" placeholder="Ingrese la contraseña" required>
+              <label for="companyUserEdit" class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="companyUserEdit" required>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -110,15 +110,15 @@
     </div>
   </div>
 
-  <div class="modal fade" id="userModalDelete" tabindex="-1" aria-labelledby="userModalLabelDelete" aria-hidden="true">
+  <div class="modal fade" id="companyModalDelete" tabindex="-1" aria-labelledby="companyModalLabelDelete" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="userModalLabelDelete">Eliminar Usuario</h5>
+          <h5 class="modal-title" id="companyModalLabelDelete">Eliminar Empresa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form data-action="submit->manage-users#deleteUser" data-manage-users-target="deleteForm">
+          <form data-action="submit->manage-companies#deleteCompany" data-manage-companies-target="deleteForm">
             <h3>¿Estas seguro de eliminar?</h3>
             <div class="modal-footer">
               <button type="submit" class="btn btn-danger">Eliminar</button>

@@ -95,11 +95,11 @@ export default class DashboardController extends Controller {
       this.filesFeedTarget.innerHTML += `
         <div class="col-md-4 mb-4">
           <div class="card">
-            <h5 class="card-header">${file.name}</h5>
+            <h5 class="card-header">#<span id="id-file">${file.id}</span> - ${file.name}</h5>
             <div class="card-body">
               <h5 class="card-title">${file.file_type}</h5>
               <p class="card-text">${file.updated_at}</p>
-              <a href="#" class="btn btn-primary">ver / descargar</a>
+              <button class="btn btn-primary" data-action="click->dashboard#downloadFile">ver / descargar</button>
             </div>
           </div>
         </div>
@@ -130,5 +130,32 @@ export default class DashboardController extends Controller {
       this.buildDashboard(data);
     });
     bootstrap.Modal.getInstance(document.getElementById('institucionModal')).hide();
+  }
+
+  downloadFile(event) {
+    const button = event.currentTarget;
+    const card = button.closest('.card');
+    const id = card.querySelector('#id-file').textContent;
+    fetch(`api/v1/company_file/show_file/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      }
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        // Open the file in a new tab
+        window.open(url, '_blank');
+        // Download the file
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Error downloading file:', error));
   }
 }
