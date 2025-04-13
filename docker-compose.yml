@@ -15,7 +15,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: docker/dev.DockerFile
+      dockerfile: Dockerfile
     working_dir: /iranda
     volumes:
       - .:/iranda

@@ -15,7 +15,7 @@
     <%= image_tag 'logo.jpg', alt: 'logo', width: '50%', style: 'border-radius: 10px;' %>
   </a>
   <hr>
-  <ul class="nav nav-pills flex-column mb-auto">
+  <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="adminMenu">
     <li class="nav-item">
       <a href="" class="nav-link active" aria-current="page" data-bs-toggle="modal" data-bs-target="#empresasModal">
         Empresas asociadas
@@ -42,18 +42,24 @@
       </a>
     </li>
   </ul>
+  <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="clientMenu">
+    <li class="nav-item">
+      <a href="" class="nav-link active" aria-current="page" data-bs-toggle="modal" data-bs-target="#empresasModal">
+        Empresas asociadas
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="" class="nav-link text-white" aria-current="page" data-bs-toggle="modal" data-bs-target="#institucionModal">
+        Cambiar institución
+      </a>
+    </li>
+  </ul>
   <hr>
-  <div class="dropdown">
-    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-      <%= image_tag 'profile.png', alt: 'admin', width: '30', style: 'border-radius: 50%;' %>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-      <li><a id="opcionesButton" class="dropdown-item" href="<%= options_path %>">Opciones</a></li>
-      <li>
-        <hr class="dropdown-divider">
-      </li>
-      <li><a id="logoutButton" class="dropdown-item" data-action="click->dashboard#logout">Salir</a></li>
-    </ul>
+  <div>
+    <%= image_tag 'profile.png', alt: 'admin', width: '30', style: 'border-radius: 50%;' %>
+    <span data-dashboard-target="username" class="text-white ms-2">name</span>
+    <hr>
+    <a id="logoutButton" class="btn btn-secondary" data-action="click->dashboard#logout">Salir</a>
   </div>
 </div>
 
@@ -96,7 +102,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="institucionModalLabel">Cambiar institucion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="institucionForm" data-action="submit->dashboard#changeInstitucion">

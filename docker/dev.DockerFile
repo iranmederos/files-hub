@@ -16,7 +16,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     apt-get update && apt-get install -y yarn
 
 # Default directory
-ENV INSTALL_PATH /zelucash
+ENV INSTALL_PATH /filehub
 RUN mkdir -p $INSTALL_PATH
 
 WORKDIR $INSTALL_PATH

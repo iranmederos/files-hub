@@ -27,6 +27,7 @@
           <th>Apellido</th>
           <th>Email</th>
           <th>Fecha de alta</th>
+          <th>Rol</th>
           <th>Acciones</th>
         </tr>
         </thead>
@@ -60,6 +61,13 @@
             <div class="mb-3">
               <label for="userPasswordAdd" class="form-label">Contraseña</label>
               <input type="text" class="form-control" id="userPasswordAdd" placeholder="Ingrese la contraseña" required>
+            </div>
+            <div class="mb-3">
+              <label for="userRoleAdd" class="form-label">Rol</label>
+              <select class="form-select" id="userRoleAdd" required>
+                <option value="1">Admin</option>
+                <option value="2">Cliente</option>
+              </select>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -99,6 +107,13 @@
             <div class="mb-3">
               <label for="userPasswordEdit" class="form-label">Contraseña</label>
               <input type="text" class="form-control" id="userPasswordEdit" placeholder="Ingrese la contraseña" required>
+            </div>
+            <div class="mb-3">
+              <label for="userRoleEdit" class="form-label">Rol</label>
+              <select class="form-select" id="userRoleEdit" required>
+                <option value="1">Admin</option>
+                <option value="2">Cliente</option>
+              </select>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>

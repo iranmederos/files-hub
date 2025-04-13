@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import {Controller} from "@hotwired/stimulus"
 
 export default class ManageUsersController extends Controller {
     static targets = ["bodyTable", "addForm", "editForm", "deleteForm"];
@@ -43,21 +43,28 @@ export default class ManageUsersController extends Controller {
         }
     }
 
-    async editUSer() {
+    async editUser(event) {
         event.preventDefault();
+
         const form = this.editFormTarget;
         const editedUser = {
             first_name: form.querySelector('#userNameEdit').value,
             last_name: form.querySelector('#userLastNameEdit').value,
             email: form.querySelector('#userEmailEdit').value,
-            password: form.querySelector('#userPasswordEdit').value
+            password: form.querySelector('#userPasswordEdit').value,
+            role_ids: [form.querySelector('#userRoleEdit').value]
         };
         let id = form.querySelector('#userIdEdit').value;
+        console.log(id)
+        await this.putEditUser(editedUser, id);
+    }
 
+    async putEditUser(user, id) {
         const url = `${this.API_URL}${id}`;
+
         const response = await fetch(url, {
             method: 'PUT',
-            body: JSON.stringify({user: editedUser}),
+            body: JSON.stringify({user: user}),
             headers: {
                 'Authorization': 'Bearer ' + this.token,
                 'Content-Type': 'application/json'
@@ -81,8 +88,9 @@ export default class ManageUsersController extends Controller {
         document.getElementById('userEmailEdit').value = row.cells[3].textContent;
     }
 
-    async addUser() {
+    async addUser(event) {
         event.preventDefault();
+
         const addUser = this.getDataForAddModal();
         const url = this.API_URL;
         const response = await fetch(url, {
@@ -107,7 +115,8 @@ export default class ManageUsersController extends Controller {
             first_name: form.querySelector('#userNameAdd').value,
             last_name: form.querySelector('#userLastNameAdd').value,
             email: form.querySelector('#userEmailAdd').value,
-            password: form.querySelector('#userPasswordAdd').value
+            password: form.querySelector('#userPasswordAdd').value,
+            role_ids: [form.querySelector('#userRoleAdd').value]
         };
     }
 
@@ -124,6 +133,7 @@ export default class ManageUsersController extends Controller {
                 <td>${user.last_name}</td>
                 <td>${user.email}</td>
                 <td>${formattedDate}</td>
+                <td>${user.role}</td>
                 <td>
                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                         data-bs-target="#userModalEdit" data-action="click->manage-users#getDataForEditModal">Editar</button>
@@ -144,7 +154,6 @@ export default class ManageUsersController extends Controller {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await response.json();
-        return data;
+        return await response.json();
     }
 }

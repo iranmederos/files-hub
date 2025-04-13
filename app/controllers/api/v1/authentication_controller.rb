@@ -9,7 +9,7 @@ module Api
 
         if user&.authenticate(user_params[:password])
           token = JWT.encode({ id: user.id }, Rails.application.secrets.secret_key_base)
-          render json: { token: token, success: true, id: user.id }, status: :ok
+          render json: { token: token, success: true, id: user.id, name: user.first_name, role: user.roles.first.name }, status: :ok
         else
           render json: { error: 'Invalid credentials' }, status: :unauthorized
         end

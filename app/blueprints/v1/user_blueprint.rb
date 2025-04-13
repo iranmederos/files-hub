@@ -13,6 +13,15 @@ class V1::UserBlueprint < Blueprinter::Base
            :failed_attempts, :unlock_token, :locked_at
   end
 
+  field :role do |resource, _options|
+    rol = resource.roles.first&.name
+    if rol == 'admin'
+      'administrador'
+    elsif rol == 'client'
+      'cliente'
+    end
+  end
+
   field :errors do |resource, _options|
     resource.errors.as_json(full_messages: true)
   end

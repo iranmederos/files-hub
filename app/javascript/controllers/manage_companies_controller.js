@@ -48,7 +48,7 @@ export default class ManageCompaniesController extends Controller {
             name: form.querySelector('#companyNameEdit').value,
             email: form.querySelector('#companyEmailEdit').value,
             phone: form.querySelector('#companyPhoneEdit').value,
-            user: form.querySelector('#companyUserEdit').value
+            user_id: form.querySelector('#companyUserEdit').value
         };
         let id = form.querySelector('#companyIdEdit').value;
 
@@ -91,7 +91,7 @@ export default class ManageCompaniesController extends Controller {
                 <td>${company.phone}</td>
                 <td>${company.user_id}</td>
                 <td>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#companyModalEdit" data-action="click->manage-companies#getDataForEditModal">Editar</button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#companyModalEdit" data-action="click->manage-companies#getDataForEditModal">Editar</button>
                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#companyModalDelete" data-action="click->manage-companies#getIdFromTable">Eliminar</button>
                 </td>
             </tr>
