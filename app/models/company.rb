@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Company < ApplicationRecord
   belongs_to :user
   has_many :company_file, dependent: :destroy
