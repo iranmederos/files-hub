@@ -1,6 +1,7 @@
 class CompanyFile < ApplicationRecord
   belongs_to :company
   belongs_to :institution
+  belongs_to :folder_file
 
   has_one_attached :file
 

@@ -4,7 +4,7 @@ class Api::V1::InstitutionController < Api::V1::BaseController
   before_action :authenticate_user!
   before_action :authorize_user!
 
-  expose :institution, find: ->(id, scope) { scope.find_by(id: id) }
+  expose :institution
 
   def index
     render_scoped_list(Institution, V1::InstitutionBlueprint)

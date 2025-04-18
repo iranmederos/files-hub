@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class V1::CompanyBlueprint < Blueprinter::Base
   identifier :id
 

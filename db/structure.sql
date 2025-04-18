@@ -94,13 +94,13 @@ CREATE TABLE `company_files` (
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   `institution_id` bigint NOT NULL,
-  `folder_files_id` bigint DEFAULT NULL,
+  `folder_file_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_company_files_on_company_id` (`company_id`),
   KEY `index_company_files_on_institution_id` (`institution_id`),
-  KEY `index_company_files_on_folder_files_id` (`folder_files_id`),
-  CONSTRAINT `fk_rails_5f451f8370` FOREIGN KEY (`folder_files_id`) REFERENCES `folder_files` (`id`),
+  KEY `index_company_files_on_folder_file_id` (`folder_file_id`),
   CONSTRAINT `fk_rails_81700813f8` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
+  CONSTRAINT `fk_rails_d60d1ef2f9` FOREIGN KEY (`folder_file_id`) REFERENCES `folder_files` (`id`),
   CONSTRAINT `fk_rails_f20027cf7d` FOREIGN KEY (`institution_id`) REFERENCES `institutions` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -111,14 +111,17 @@ CREATE TABLE `folder_files` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `size` int DEFAULT NULL,
-  `institutions_id` bigint NOT NULL,
+  `institution_id` bigint NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `company_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_folder_files_on_institutions_id` (`institutions_id`),
+  KEY `index_folder_files_on_institution_id` (`institution_id`),
   KEY `index_folder_files_on_name` (`name`),
   KEY `index_folder_files_on_size` (`size`),
-  CONSTRAINT `fk_rails_5c09e084f6` FOREIGN KEY (`institutions_id`) REFERENCES `institutions` (`id`)
+  KEY `index_folder_files_on_company_id` (`company_id`),
+  CONSTRAINT `fk_rails_70f6c7a024` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
+  CONSTRAINT `fk_rails_f03491d9b9` FOREIGN KEY (`institution_id`) REFERENCES `institutions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `institutions`;
@@ -217,6 +220,7 @@ CREATE TABLE `users` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO `schema_migrations` (version) VALUES
+('20250418144827'),
 ('20250417213637'),
 ('20250126173242'),
 ('20250123210256'),
