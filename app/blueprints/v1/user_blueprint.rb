@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class V1::UserBlueprint < Blueprinter::Base
   identifier :id
   fields :email, :first_name, :last_name, :created_at

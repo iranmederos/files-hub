@@ -16,4 +16,12 @@ class V1::CompanyFileBlueprint < Blueprinter::Base
   field :institution_id do |company_file|
     company_file.institution_id
   end
+
+  field :folder_id do |company_file|
+    company_file.folder_file_id
+  end
+
+  field :errors do |resource, _options|
+    resource.errors.as_json(full_messages: true)
+  end
 end

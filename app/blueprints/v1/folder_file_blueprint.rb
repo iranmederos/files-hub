@@ -12,4 +12,8 @@ class V1::FolderFileBlueprint < Blueprinter::Base
   field :company_id do |folder_file|
     folder_file.company.id
   end
+
+  field :size do |folder_file|
+    folder_file.company_files.count
+  end
 end
