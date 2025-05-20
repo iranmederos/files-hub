@@ -3,71 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Archivos</title>
+  <title>Gestión de Carpetas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-<div class="container mt-5" data-controller="manage-files">
-  <h1 class="text-center">Gestión de Archivos</h1>
+<div class="container mt-5" data-controller="manage-folders">
+  <h1 class="text-center">Gestión de Carpetas</h1>
   <br>
   <div class="d-flex justify-content-between align-items-center mb-3">
     <a href="<%= dashboard_path %>" class="btn btn-primary">Volver al Dashboard</a>
+
+    <div class="d-flex align-items-center" style="width: 70%;">
+      <label for="companyDropdown" class="form-label me-2">Empresa</label>
+      <select class="form-select me-3 w-50" id="companyDropdown" data-manage-folders-target="companyDropdown"></select>
+
+      <label for="institutionDropdown" class="form-label me-2">Institución</label>
+      <select class="form-select w-50" id="institutionDropdown" data-manage-folders-target="institutionDropdown"></select>
+    </div>
   </div>
 
   <div class="card mt-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">Archivo de carpeta</h4>
+      <h4 class="mb-0">Carpetas</h4>
       <button class="btn btn-sm btn-primary w-auto px-4 ms-3" data-bs-toggle="modal" data-bs-target="#folderModalAdd">Agregar
-        archivo
+        carpeta
       </button>
     </div>
     <div class="card-body">
-      <div style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>Nombre de archivo</th>
-            <th>Tipo</th>
-            <th>Institución</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-          </tr>
-          </thead>
-          <tbody id="bodyTable" data-manage-files-target="bodyTable">
-          <!-- Filas dinámicas aquí -->
-          </tbody>
-        </table>
-      </div>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre de archivo</th>
+          <th>Institución</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="bodyTable" data-manage-folders-target="bodyTable">
+        <!-- Filas dinámicas aquí -->
+        </tbody>
+      </table>
     </div>
   </div>
 
   <!-- Modal para agregar archivos -->
-  <div class="modal fade" id="fileModalAdd" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+  <div class="modal fade" id="folderModalAdd" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="fileModalLabel">Agregar archivo</h5>
+          <h5 class="modal-title" id="folderModalLabel">Agregar archivo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="addForm" data-manage-files-target="addForm">
+          <form id="addForm" data-manage-folders-target="addForm">
             <div class="mb-3">
-              <label for="fileNameAdd" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="fileNameAdd" placeholder="Ingrese el nombre del archivo" required>
-            </div>
-            <div class="mb-3">
-              <label for="typeAdd" class="form-label">Tipo</label>
-              <input type="text" class="form-control" id="typeAdd" placeholder="Ingrese el tipo del archivo, ej: .pdf" required>
+              <label for="folderNameAdd" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="folderNameAdd" placeholder="Ingrese el nombre del archivo" required>
             </div>
             <div class="mb-3">
               <label for="institutionDropdownAdd" class="form-label">Seleccionar institución</label>
-              <select class="form-select" id="institutionDropdownAdd" data-manage-files-target="institutionDropdownAdd"></select>
-            </div>
-            <div class="mb-3">
-              <label for="fileInput" class="form-label">Archivo</label>
-              <input type="file" class="form-control" id="fileInput" required>
+              <select class="form-select" id="institutionDropdownAdd" data-manage-folders-target="institutionDropdownAdd"></select>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -80,22 +77,22 @@
   </div>
 
   <!-- Modal para editar archivos -->
-  <div class="modal fade" id="fileModalEdit" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+  <div class="modal fade" id="folderModalEdit" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="fileModalLabel">Editar archivo</h5>
+          <h5 class="modal-title" id="folderModalLabel">Editar archivo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="editForm" data-manage-files-target="editForm">
+          <form id="editForm" data-manage-folders-target="editForm">
             <div class="mb-3">
-              <label for="fileIdEdit" class="form-label">ID</label>
-              <input type="text" class="form-control" id="fileIdEdit" readonly>
+              <label for="folderIdEdit" class="form-label">ID</label>
+              <input type="text" class="form-control" id="folderIdEdit" readonly>
             </div>
             <div class="mb-3">
-              <label for="fileNameEdit" class="form-label">Nombre de archivo</label>
-              <input type="text" class="form-control" id="fileNameEdit" placeholder="Ingrese el nombre del archivo" required>
+              <label for="folderNameEdit" class="form-label">Nombre de archivo</label>
+              <input type="text" class="form-control" id="folderNameEdit" placeholder="Ingrese el nombre del archivo" required>
             </div>
             <div class="mb-3">
               <label for="typeEdit" class="form-label">Tipo</label>
@@ -103,7 +100,7 @@
             </div>
             <div class="mb-3">
               <label for="institutionDropdownEdit" class="form-label">Seleccionar institución</label>
-              <select class="form-select" id="institutionDropdownEdit" data-manage-files-target="institutionDropdownEdit"></select>
+              <select class="form-select" id="institutionDropdownEdit" data-manage-folders-target="institutionDropdownEdit"></select>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -116,16 +113,16 @@
   </div>
 
   <!-- Modal para eliminar archivos -->
-  <div class="modal fade" id="fileModalDelete" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+  <div class="modal fade" id="folderModalDelete" tabindex="-1" aria-labelledby="folderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="fileModalLabel">Eliminar archivo</h5>
+          <h5 class="modal-title" id="folderModalLabel">Eliminar archivo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="deleteForm" data-manage-files-target="deleteForm">
-            <h3>¿Confirma eliminar el archivo <span id="deleteFileName"></span>?</h3>
+          <form id="deleteForm" data-manage-folders-target="deleteForm">
+            <h3>¿Confirma eliminar el archivo <span id="deleteFolderName"></span>?</h3>
             <div class="modal-footer">
               <button type="submit" class="btn btn-danger">Eliminar</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

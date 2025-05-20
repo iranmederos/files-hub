@@ -11,28 +11,32 @@
 <body data-controller="manage-companies">
 <div class="container mt-5">
   <h1 class="text-center">Gestión de Empresas</h1>
-  <a href="/dashboard.html" class="btn btn-primary mt-3">Volver al Dashboard</a>
+  <a href="<%= dashboard_path %>" class="btn btn-primary">Volver al Dashboard</a>
 
   <div class="card mt-4">
-    <div class="card-header">
-      <h4>Lista de Empresas</h4>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#companyModalAdd">Agregar Empresa</button>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Lista Empresas</h4>
+      <button class="btn btn-sm btn-primary w-auto px-4 ms-3" data-bs-toggle="modal" data-bs-target="#folderModalAdd">Agregar
+        empresa
+      </button>
     </div>
     <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Telefono</th>
-          <th>Usuario</th>
-          <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody data-manage-companies-target="bodyTable">
-        </tbody>
-      </table>
+      <div style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody data-manage-companies-target="bodyTable">
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

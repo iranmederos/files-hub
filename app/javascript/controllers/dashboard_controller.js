@@ -62,6 +62,9 @@ export default class DashboardController extends Controller {
     try {
       backButton.style.display = "block";
       const folderId = event.params.folderId;
+      if (!folderId){
+        window.location.href = "/dashboard";
+      }
       const files = await this.getFilesByCompanyAndInstitution(
         this.empresasDropdownTarget.value,
         this.institucionDropdownTarget.value,

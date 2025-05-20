@@ -70,11 +70,7 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   private
 
   def finder_with_params(params)
-    if params[:institution_id].present? && params[:folder_file_id].present?
-      CompanyFile.by_company_and_institution(params[:company_id], params[:institution_id], params[:folder_file_id])
-    else
-      CompanyFile.where(company_id: params[:company_id])
-    end
+      CompanyFile.by_folder_file(params[:folder_file_id])
   end
 
   def company_file_params

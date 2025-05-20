@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-export default class ManageFilesController extends Controller {
+export default class ManageFoldersController extends Controller {
     static targets = [
         "bodyTable",
         "addForm",
@@ -12,7 +12,9 @@ export default class ManageFilesController extends Controller {
         "institutionDropdownAdd"
     ]
 
-    API_URL = "api/v1/company_file/";
+    API_URL = "api/v1/folder_file/";
+    API_COMPANY_URL = "api/v1/company/index_by_user?user_id=";
+    API_INSTITUTION_URL = "api/v1/institution";
 
     connect() {
         if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
@@ -22,49 +24,31 @@ export default class ManageFilesController extends Controller {
 
         this.token = localStorage.getItem('token');
         this.id = localStorage.getItem('id');
-        this.idDelete = 0;
+        this.elementId = 0;
 
         this.init();
     }
 
     async init() {
+        await this.fillCompaniesDropdown();
+        await this.fillInstitutionsDropdown();
         await this.fillBodyTable();
 
-        this.addFormTarget.addEventListener('submit', this.addFile.bind(this));
-        this.editFormTarget.addEventListener('submit', this.editFile.bind(this));
-        this.deleteFormTarget.addEventListener('submit', this.deleteFile.bind(this));
-    }
-
-    async fillBodyTable() {
-        //this must be change to findByFolder
-        let folderId = localStorage.getItem('folderId');
-        const files = await this.getFilesByFolder(folderId);
-        this.listFiles(files);
-    }
-
-    listFiles(files) {
-        this.bodyTableTarget.innerHTML = '';
-        files.forEach(file => {
-            this.bodyTableTarget.innerHTML += `
-                <tr>
-                    <td>${file.id}</td>
-                    <td>${file.name}</td>
-                    <td>${file.file_type}</td>
-                    <td>${file.institution_id}</td>
-                    <td>${file.updated_at}</td>
-                    <td>
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalEdit" data-action="click->manage-files#getDataForEditModal">Editar</button>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalDelete" data-action="click->manage-files#getIdFromTable">Eliminar</button>
-                    </td>
-                </tr>
-            `;
+        this.companyDropdownTarget.addEventListener('change', async () => {
+            await this.fillBodyTable();
         });
+
+        this.institutionDropdownTarget.addEventListener('change', async () => {
+            await this.fillBodyTable();
+        });
+
+        this.addFormTarget.addEventListener('submit', this.addFolder.bind(this));
+        this.editFormTarget.addEventListener('submit', this.editFolder.bind(this));
+        this.deleteFormTarget.addEventListener('submit', this.deleteFolder.bind(this));
     }
 
-    async getFilesByFolder(folderId) {
-        const url = this.API_URL + `index_by?folder_file_id=${folderId}`;
+    async getCompanies() {
+        const url = this.API_COMPANY_URL + this.id;
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -75,7 +59,58 @@ export default class ManageFilesController extends Controller {
         return await response.json();
     }
 
-    async getFilesByCompanyAndInstitution(company, institution) {
+    listCompanies(companies) {
+        if (this.companyDropdownTarget.getElementsByTagName('option').length === 0) {
+            companies.forEach(company => {
+                this.companyDropdownTarget.innerHTML += `
+                    <option value="${company.id}">${company.name}</option>
+                `;
+            });
+        }
+    }
+
+    async fillCompaniesDropdown() {
+        const companies = await this.getCompanies();
+        this.listCompanies(companies);
+    }
+
+    async fillBodyTable() {
+        const companyId = this.companyDropdownTarget.value;
+        const institutionId = this.institutionDropdownTarget.value;
+        const folders = await this.getFoldersByCompanyAndInstitution(companyId, institutionId);
+        this.listFolders(folders);
+    }
+
+    listFolders(folders) {
+        this.bodyTableTarget.innerHTML = '';
+        folders.forEach(folder => {
+            this.bodyTableTarget.innerHTML += `
+                <tr>
+                    <td>${folder.id}</td>
+                    <td>${folder.name}</td>
+                    <td>${folder.institution_id}</td>
+                    <td>${folder.updated_at}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#fileModalEdit" data-action="click->manage-folders#getDataForEditModal">Editar</button>
+                            
+                        <button class="btn btn-secondary btn-sm" data-action="click->manage-folders#redirectToFiles">Ver</button>
+                       
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#fileModalDelete" data-action="click->manage-folders#getIdFromTable">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    redirectToFiles(event) {
+        this.getIdFromTable(event)
+        localStorage.setItem('folderId', this.elementId);
+        window.location.href = '/manage_files';
+    }
+
+    async getFoldersByCompanyAndInstitution(company, institution) {
         const url = this.API_URL + `index_by?company_id=${company}&institution_id=${institution}`;
         const response = await fetch(url, {
             method: 'GET',
@@ -129,24 +164,18 @@ export default class ManageFilesController extends Controller {
     getIdFromTable(event) {
         const button = event.currentTarget;
         const row = button.parentElement.parentElement;
-        this.idDelete = row.cells[0].textContent;
+        this.elementId = row.cells[0].textContent;
     }
 
-    async addFile(event) {
+    async addFolder(event) {
         event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('company_file[name]', this.addFormTarget.fileNameAdd.value);
-        formData.append('company_file[file_type]', this.addFormTarget.typeAdd.value);
-        formData.append('company_file[institution_id]', this.addFormTarget.institutionDropdownAdd.value);
-        formData.append('company_file[company_id]', this.companyDropdownTarget.value);
-
-        const fileInput = document.getElementById('fileInput');
-        if (fileInput.files.length > 0) {
-            formData.append('company_file[file]', fileInput.files[0]);
+        let folder = {
+            name: this.addFormTarget.fileNameAdd.value,
+            company_id: this.companyDropdownTarget.value,
+            institution_id: this.institutionDropdownTarget.value,
         }
 
-        await this.postAddFile(formData);
+        await this.postAddFolder();
 
         this.addFormTarget.reset();
         const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalAdd'));
@@ -154,7 +183,7 @@ export default class ManageFilesController extends Controller {
         window.location.reload();
     }
 
-    async postAddFile(formData) {
+    async postAddFolder(formData) {
         const url = this.API_URL;
         const response = await fetch(url, {
             method: 'POST',
@@ -166,7 +195,7 @@ export default class ManageFilesController extends Controller {
         return await response.json();
     }
 
-    async editFile(event) {
+    async editFolder(event) {
         event.preventDefault();
 
         const file = {
@@ -176,7 +205,7 @@ export default class ManageFilesController extends Controller {
         };
         const id = this.editFormTarget.fileIdEdit.value;
 
-        await this.putEditFile(file, id);
+        await this.putEditFolder(file, id);
 
         this.editFormTarget.reset();
         const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalEdit'));
@@ -184,7 +213,7 @@ export default class ManageFilesController extends Controller {
         window.location.reload();
     }
 
-    async putEditFile(file, id) {
+    async putEditFolder(file, id) {
         const url = this.API_URL + `${id}`;
         const response = await fetch(url, {
             method: 'PUT',
@@ -197,15 +226,15 @@ export default class ManageFilesController extends Controller {
         return await response.json();
     }
 
-    async deleteFile(event) {
+    async deleteFolder(event) {
         event.preventDefault();
-        await this.requestDeleteFile(this.idDelete);
+        await this.requestDeleteFolder(this.elementId);
         const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalDelete'));
         modal.hide();
         window.location.reload();
     }
 
-    async requestDeleteFile(id) {
+    async requestDeleteFolder(id) {
         const url = this.API_URL + `${id}`;
         const response = await fetch(url, {
             method: 'DELETE',

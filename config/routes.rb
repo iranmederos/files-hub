@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'dashboard#dashboard'
   get 'manage_users', to: 'dashboard#manage_users'
   get 'manage_files', to: 'dashboard#manage_files'
+  get 'manage_folders', to: 'dashboard#manage_folders'
   get 'manage_companies', to: 'dashboard#manage_companies'
   get 'options', to: 'dashboard#options'
 end

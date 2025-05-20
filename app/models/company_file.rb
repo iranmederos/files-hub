@@ -13,6 +13,9 @@ class CompanyFile < ApplicationRecord
   scope :by_company_and_institution, ->(company_id, institution_id, folder_file_id) {
     where(company_id: company_id, institution_id: institution_id, folder_file_id: folder_file_id) }
 
+  scope :by_folder_file, ->(folder_file_id) {
+    where(folder_file_id: folder_file_id) }
+
   private
 
   def normalize_name
