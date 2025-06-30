@@ -11,14 +11,15 @@
 <div class="container mt-5" data-controller="manage-files">
   <h1 class="text-center">Gestión de Archivos</h1>
   <br>
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-start align-items-center mb-3 gap-2">
     <a href="<%= dashboard_path %>" class="btn btn-primary">Volver al Dashboard</a>
+    <a href="<%= manage_folders_path %>" class="btn btn-primary">volver a carpetas</a>
   </div>
 
   <div class="card mt-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h4 class="mb-0">Archivo de carpeta</h4>
-      <button class="btn btn-sm btn-primary w-auto px-4 ms-3" data-bs-toggle="modal" data-bs-target="#folderModalAdd">Agregar
+      <button class="btn btn-sm btn-primary w-auto px-4 ms-3" data-bs-toggle="modal" data-bs-target="#fileModalAdd">Agregar
         archivo
       </button>
     </div>
@@ -62,10 +63,6 @@
               <input type="text" class="form-control" id="typeAdd" placeholder="Ingrese el tipo del archivo, ej: .pdf" required>
             </div>
             <div class="mb-3">
-              <label for="institutionDropdownAdd" class="form-label">Seleccionar institución</label>
-              <select class="form-select" id="institutionDropdownAdd" data-manage-files-target="institutionDropdownAdd"></select>
-            </div>
-            <div class="mb-3">
               <label for="fileInput" class="form-label">Archivo</label>
               <input type="file" class="form-control" id="fileInput" required>
             </div>
@@ -100,10 +97,6 @@
             <div class="mb-3">
               <label for="typeEdit" class="form-label">Tipo</label>
               <input type="text" class="form-control" id="typeEdit" placeholder="Ingrese el tipo del archivo, ej: .pdf" required>
-            </div>
-            <div class="mb-3">
-              <label for="institutionDropdownEdit" class="form-label">Seleccionar institución</label>
-              <select class="form-select" id="institutionDropdownEdit" data-manage-files-target="institutionDropdownEdit"></select>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Guardar</button>

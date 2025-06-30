@@ -138,8 +138,7 @@ export default class ManageFilesController extends Controller {
         const formData = new FormData();
         formData.append('company_file[name]', this.addFormTarget.fileNameAdd.value);
         formData.append('company_file[file_type]', this.addFormTarget.typeAdd.value);
-        formData.append('company_file[institution_id]', this.addFormTarget.institutionDropdownAdd.value);
-        formData.append('company_file[company_id]', this.companyDropdownTarget.value);
+        formData.append('company_file[folder_file_id]', localStorage.getItem('folderId'));
 
         const fileInput = document.getElementById('fileInput');
         if (fileInput.files.length > 0) {

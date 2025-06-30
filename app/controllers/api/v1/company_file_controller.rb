@@ -43,7 +43,10 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   end
 
   def create
-    new_company_file.file.attach(params[:company_file][:file])
+    folder_file = FolderFile.find_by(id: params[:company_file][:folder_file_id])
+    new_company_file.institution_id = folder_file&.institution_id
+    new_company_file.company_id = folder_file&.company_id
+    new_company_file.file.attach(params[:company_file][:file]) if params[:company_file][:file].present?
     if new_company_file.save
       render_success V1::CompanyFileBlueprint.render(new_company_file)
     else
@@ -74,6 +77,6 @@ class Api::V1::CompanyFileController < Api::V1::BaseController
   end
 
   def company_file_params
-    params.require(:company_file).permit(:name, :file, :file_type, :company_id, :institution_id, :folder_file_id)
+    params.require(:company_file).permit(:name, :file, :file_type, :folder_file_id)
   end
 end

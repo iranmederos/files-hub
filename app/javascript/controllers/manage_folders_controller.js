@@ -92,12 +92,12 @@ export default class ManageFoldersController extends Controller {
                     <td>${folder.updated_at}</td>
                     <td>
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalEdit" data-action="click->manage-folders#getDataForEditModal">Editar</button>
+                            data-bs-target="#folderModalEdit" data-action="click->manage-folders#getDataForEditModal">Editar</button>
                             
                         <button class="btn btn-secondary btn-sm" data-action="click->manage-folders#redirectToFiles">Ver</button>
                        
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalDelete" data-action="click->manage-folders#getIdFromTable">Eliminar</button>
+                            data-bs-target="#folderModalDelete" data-action="click->manage-folders#getIdFromTable">Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -155,8 +155,8 @@ export default class ManageFoldersController extends Controller {
         const button = event.currentTarget;
         const row = button.closest('tr');
 
-        document.getElementById('fileIdEdit').value = row.cells[0].textContent;
-        document.getElementById('fileNameEdit').value = row.cells[1].textContent;
+        document.getElementById('folderIdEdit').value = row.cells[0].textContent;
+        document.getElementById('folderNameEdit').value = row.cells[1].textContent;
         document.getElementById('typeEdit').value = row.cells[2].textContent;
         document.getElementById('institutionDropdownEdit').value = row.cells[3].textContent;
     }
@@ -169,28 +169,29 @@ export default class ManageFoldersController extends Controller {
 
     async addFolder(event) {
         event.preventDefault();
-        let folder = {
-            name: this.addFormTarget.fileNameAdd.value,
+        let folder_file = {
+            name: this.addFormTarget.folderNameAdd.value,
             company_id: this.companyDropdownTarget.value,
             institution_id: this.institutionDropdownTarget.value,
         }
 
-        await this.postAddFolder();
+        await this.postAddFolder(folder_file);
 
         this.addFormTarget.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalAdd'));
+        const modal = bootstrap.Modal.getInstance(document.getElementById('folderModalAdd'));
         modal.hide();
         window.location.reload();
     }
 
-    async postAddFolder(formData) {
+    async postAddFolder(data) {
         const url = this.API_URL;
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + this.token
+                'Authorization': 'Bearer ' + this.token,
+                'Content-Type': 'application/json'
             },
-            body: formData
+            body: JSON.stringify({folder_file: data})
         });
         return await response.json();
     }
@@ -199,7 +200,7 @@ export default class ManageFoldersController extends Controller {
         event.preventDefault();
 
         const file = {
-            name: this.editFormTarget.fileNameEdit.value,
+            name: this.editFormTarget.folderNameAdd.value,
             file_type: this.editFormTarget.typeEdit.value,
             institution_id: this.editFormTarget.institutionDropdownEdit.value
         };
@@ -208,7 +209,7 @@ export default class ManageFoldersController extends Controller {
         await this.putEditFolder(file, id);
 
         this.editFormTarget.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalEdit'));
+        const modal = bootstrap.Modal.getInstance(document.getElementById('folderModalEdit'));
         modal.hide();
         window.location.reload();
     }
@@ -229,7 +230,7 @@ export default class ManageFoldersController extends Controller {
     async deleteFolder(event) {
         event.preventDefault();
         await this.requestDeleteFolder(this.elementId);
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalDelete'));
+        const modal = bootstrap.Modal.getInstance(document.getElementById('folderModalDelete'));
         modal.hide();
         window.location.reload();
     }

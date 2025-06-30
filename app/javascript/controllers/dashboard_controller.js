@@ -206,7 +206,7 @@ export default class DashboardController extends Controller {
     event.preventDefault();
     const empresaId = this.empresasDropdownTarget.value;
     const institucionId = this.institucionDropdownTarget.value;
-    this.getFilesByCompanyAndInstitution(empresaId, institucionId).then(
+    this.getFoldersByCompanyAndInstitution(empresaId, institucionId).then(
       (data) => {
         this.buildDashboard(data);
       },
@@ -220,7 +220,7 @@ export default class DashboardController extends Controller {
     event.preventDefault();
     const empresaId = this.empresasDropdownTarget.value;
     const institucionId = this.institucionDropdownTarget.value;
-    this.getFilesByCompanyAndInstitution(empresaId, institucionId).then(
+    this.getFoldersByCompanyAndInstitution(empresaId, institucionId).then(
       (data) => {
         this.buildDashboard(data);
       },
