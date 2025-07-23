@@ -135,6 +135,17 @@ export default class ManageFilesController extends Controller {
     async addFile(event) {
         event.preventDefault();
 
+        const button = this.addFormTarget.querySelector('button[type="submit"]');
+        // Show loading animation
+        const loading = document.createElement("div");
+        loading.className = "spinner-border text-secondary";
+        loading.role = "status";
+        loading.style.display = "inline-block";
+        loading.style.marginLeft = "10px";
+        loading.innerHTML = '<span class="visually-hidden">Loading...</span>';
+        button.disabled = true;
+        button.appendChild(loading);
+
         const formData = new FormData();
         formData.append('company_file[name]', this.addFormTarget.fileNameAdd.value);
         formData.append('company_file[file_type]', this.addFormTarget.typeAdd.value);

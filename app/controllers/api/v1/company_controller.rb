@@ -11,12 +11,15 @@ class Api::V1::CompanyController < Api::V1::BaseController
   end
 
   def index_by_user
-    if companies
-      render_success V1::CompanyBlueprint.render(companies)
-    else
-      render_error "Not Found"
+    user = User.find_by(id: params[:user_id])
+    if user&.roles&.first&.name == "admin"
+      render_success V1::CompanyBlueprint.render(Company.all)
+    elsif companies.present?
+        render_success V1::CompanyBlueprint.render(companies)
+      else
+        render_error "Not Found"
+      end
     end
-  end
 
   def show
     if company

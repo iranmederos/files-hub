@@ -17,7 +17,7 @@ export default class ManageFoldersController extends Controller {
     API_INSTITUTION_URL = "api/v1/institution";
 
     connect() {
-        if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
+        if (!localStorage.getItem('token')){
             alert('No estás logueado');
             window.location.href = '/';
         }

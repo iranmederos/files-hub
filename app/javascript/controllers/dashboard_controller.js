@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { checkLogin, getClaims } from "../helpers/utils_functions";
 
 export default class DashboardController extends Controller {
   static targets = [
@@ -12,22 +13,16 @@ export default class DashboardController extends Controller {
     "backButton",
   ];
   connect() {
-    if (!localStorage.getItem("token")) {
-      alert("No estás logueado");
-      window.location.href = "/";
-    }
-
+    checkLogin();
     this.token = localStorage.getItem("token");
-    this.id = localStorage.getItem("id");
-    this.name = localStorage.getItem("name");
-    this.userRole = localStorage.getItem("role");
+    this.claims = getClaims(this.token);
     this.writeUsername();
     this.panel();
-    this.loadInitialData();
+    this.loadInitialData().then(r => null);
   }
 
   panel() {
-    if (this.userRole === "admin") {
+    if (this.claims.roles === "admin") {
       this.adminMenuTarget.style.display = "block";
       this.clientMenuTarget.style.display = "none";
     } else {
@@ -36,8 +31,8 @@ export default class DashboardController extends Controller {
     }
   }
 
-  async writeUsername() {
-    this.usernameTarget.innerHTML = this.name;
+  writeUsername() {
+    this.usernameTarget.innerHTML = this.claims.name;
   }
 
   async loadInitialData() {
@@ -49,8 +44,8 @@ export default class DashboardController extends Controller {
       this.listCompanies(companies);
       this.listInstitutions(institutions);
       const folders = await this.getFoldersByCompanyAndInstitution(
-        this.empresasDropdownTarget.value,
-        this.institucionDropdownTarget.value,
+          this.empresasDropdownTarget.value,
+          this.institucionDropdownTarget.value,
       );
       this.buildDashboard(folders);
     } catch (error) {
@@ -101,7 +96,7 @@ export default class DashboardController extends Controller {
   }
 
   async getCompaniesByUser() {
-    const url = `api/v1/company/index_by_user?user_id=${this.id}`;
+    const url = `api/v1/company/index_by_user?user_id=${this.claims.id}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -234,6 +229,17 @@ export default class DashboardController extends Controller {
     const button = event.currentTarget;
     const card = button.closest(".card");
     const id = card.querySelector("#id-file").textContent;
+
+    // Show loading animation
+    const loading = document.createElement("div");
+    loading.className = "spinner-border text-secondary";
+    loading.role = "status";
+    loading.style.display = "inline-block";
+    loading.style.marginLeft = "10px";
+    loading.innerHTML = '<span class="visually-hidden">Loading...</span>';
+    button.disabled = true;
+    button.appendChild(loading);
+
     fetch(`api/v1/company_file/show_file/${id}`, {
       method: "GET",
       headers: {
@@ -257,6 +263,11 @@ export default class DashboardController extends Controller {
 
         window.URL.revokeObjectURL(url);
       })
-      .catch((error) => console.error("Error downloading file:", error));
+      .catch((error) => console.error("Error downloading file:", error))
+      .finally(() => {
+        // Remove loading animation
+        button.disabled = false;
+        if (loading.parentNode) loading.parentNode.removeChild(loading);
+      });
   }
 }

@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { checkLogin, getClaims } from "../helpers/utils_functions";
 
 export default class ManageCompaniesController extends Controller {
     static targets = ["bodyTable", "addForm", "editForm", "deleteForm"];
@@ -6,14 +7,9 @@ export default class ManageCompaniesController extends Controller {
     idDelete = null;
 
     connect() {
-        if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
-            alert('No estás logueado');
-            window.location.href = '/';
-        }
-
+        checkLogin()
         this.token = localStorage.getItem('token');
-        this.id = localStorage.getItem('id');
-
+        this.claims = getClaims(this.token);
         this.getCompanies().then(data => {
             this.fillTable(data);
         });
@@ -89,6 +85,7 @@ export default class ManageCompaniesController extends Controller {
                 <td>${company.name}</td>
                 <td>${company.email}</td>
                 <td>${company.phone}</td>
+                <td>${company.username}</td>
                 <td>${company.user_id}</td>
                 <td>
                     <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#companyModalEdit" data-action="click->manage-companies#getDataForEditModal">Editar</button>
@@ -107,7 +104,7 @@ export default class ManageCompaniesController extends Controller {
         form.querySelector('#companyNameEdit').value = row.cells[1].textContent;
         form.querySelector('#companyEmailEdit').value = row.cells[2].textContent;
         form.querySelector('#companyPhoneEdit').value = row.cells[3].textContent;
-        form.querySelector('#companyUserEdit').value = row.cells[4].textContent;
+        form.querySelector('#companyUserEdit').value = row.cells[5].textContent;
     }
 
     getDataForAddModal() {

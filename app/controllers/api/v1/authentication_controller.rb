@@ -8,8 +8,13 @@ module Api
         user = User.find_by(email: user_params[:email])
 
         if user&.authenticate(user_params[:password])
-          token = JWT.encode({ id: user.id }, Rails.application.secrets.secret_key_base)
-          render json: { token: token, success: true, id: user.id, name: user.first_name, role: user.roles.first.name }, status: :ok
+          data = {
+            id: user.id,
+            name: user.first_name,
+            roles: user.roles.first&.name,
+          }
+          token = JWT.encode(data.merge({ exp: 1.hours.from_now.to_i }), ENV["JWT_SECRET_KEY"])
+          render json: { token: token, success: true }, status: :ok
         else
           render json: { error: 'Invalid credentials' }, status: :unauthorized
         end

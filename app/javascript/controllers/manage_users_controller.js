@@ -7,13 +7,9 @@ export default class ManageUsersController extends Controller {
 
 
     connect() {
-        if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
-            alert('No estás logueado');
-            window.location.href = '/';
-        }
+
 
         this.token = localStorage.getItem('token');
-        this.id = localStorage.getItem('id');
 
         this.getUsers().then(data => {
             this.fillTable(data);
