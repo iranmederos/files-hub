@@ -90,7 +90,9 @@
   <div class="container-fluid">
     <nav class="navbar navbar-light bg-light border-bottom">
       <div class="container-fluid">
-        <button id="backButton" class="btn btn-link ps-0" data-action="click->dashboard#loadInitialData"><i class="bi bi-arrow-left me-2"></i>Atrás</button>
+        <button id="backButton" class="btn btn-link ps-0" data-dashboard-target="backButton" data-action="click->dashboard#loadInitialData">
+          <i class="bi bi-arrow-left me-2"></i>Atrás
+        </button>
         <span class="navbar-text fw-bold" id="title" data-dashboard-target="title"></span>
       </div>
     </nav>

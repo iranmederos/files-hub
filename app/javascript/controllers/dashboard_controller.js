@@ -12,13 +12,19 @@ export default class DashboardController extends Controller {
     "clientMenu",
     "backButton",
   ];
+
   connect() {
     checkLogin();
     this.token = localStorage.getItem("token");
     this.claims = getClaims(this.token);
     this.writeUsername();
     this.panel();
-    this.loadInitialData().then(r => null);
+    this.loadInitialData();
+    this.empresasDropdownTarget.addEventListener('change', this.saveEmpresaSelection.bind(this));
+    this.institucionDropdownTarget.addEventListener('change', this.saveInstitucionSelection.bind(this));
+    if (this.backButtonTarget) {
+      this.backButtonTarget.addEventListener('click', this.handleBackButtonClick.bind(this));
+    }
   }
 
   panel() {
@@ -35,29 +41,41 @@ export default class DashboardController extends Controller {
     this.usernameTarget.innerHTML = this.claims.name;
   }
 
+  saveEmpresaSelection() {
+    localStorage.setItem('selectedEmpresa', this.empresasDropdownTarget.value);
+  }
+
+  saveInstitucionSelection() {
+    localStorage.setItem('selectedInstitucion', this.institucionDropdownTarget.value);
+  }
+
   async loadInitialData() {
     try {
-      backButton.style.display = "none";
+      if (this.backButtonTarget) {
+        this.backButtonTarget.style.display = "none";
+      }
       this.FeedTarget.innerHTML = "";
       const companies = await this.getCompaniesByUser();
       const institutions = await this.getInstitutions();
       this.listCompanies(companies);
       this.listInstitutions(institutions);
       const folders = await this.getFoldersByCompanyAndInstitution(
-          this.empresasDropdownTarget.value,
-          this.institucionDropdownTarget.value,
+        this.empresasDropdownTarget.value,
+        this.institucionDropdownTarget.value,
       );
       this.buildDashboard(folders);
     } catch (error) {
-      console.error("Error en la carga de datos:", error);
+      this.handleError(error);
     }
   }
 
   async loadFiles(event) {
     try {
-      backButton.style.display = "block";
+      if (this.backButtonTarget) {
+        this.backButtonTarget.style.display = "block";
+      }
       const folderId = event.params.folderId;
-      if (!folderId){
+      if (!folderId) {
         window.location.href = "/dashboard";
       }
       const files = await this.getFilesByCompanyAndInstitution(
@@ -67,75 +85,103 @@ export default class DashboardController extends Controller {
       );
       this.buildDashboard(files, "file");
     } catch (error) {
-      console.error("Error en la carga de datos:", error);
+      this.handleError(error);
+    }
+  }
+
+  handleBackButtonClick(event) {
+    event.preventDefault();
+    this.loadInitialData();
+    if (this.backButtonTarget) {
+      this.backButtonTarget.style.display = "none";
     }
   }
 
   async getFilesByCompanyAndInstitution(company, institution, folderId) {
-    const url = `api/v1/company_file/index_by?company_id=${company}&institution_id=${institution}&folder_file_id=${folderId}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    return response.json();
+    try {
+      const url = `api/v1/company_file/index_by?company_id=${company}&institution_id=${institution}&folder_file_id=${folderId}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+      if (!response.ok) throw new Error('Error fetching files');
+      return await response.json();
+    } catch (error) {
+      this.handleError(error);
+      return [];
+    }
   }
 
   async getFoldersByCompanyAndInstitution(company, institution) {
-    const url = `api/v1/folder_file/index_by?company_id=${company}&institution_id=${institution}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    return response.json();
+    try {
+      const url = `api/v1/folder_file/index_by?company_id=${company}&institution_id=${institution}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+      if (!response.ok) throw new Error('Error fetching folders');
+      return await response.json();
+    } catch (error) {
+      this.handleError(error);
+      return [];
+    }
   }
 
   async getCompaniesByUser() {
-    const url = `api/v1/company/index_by_user?user_id=${this.claims.id}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    return response.json();
+    try {
+      const url = `api/v1/company/index_by_user?user_id=${this.claims.id}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+      if (!response.ok) throw new Error('Error fetching companies');
+      return await response.json();
+    } catch (error) {
+      this.handleError(error);
+      return [];
+    }
   }
 
   async getInstitutions() {
-    const url = `api/v1/institution`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    return response.json();
+    try {
+      const url = `api/v1/institution`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+      if (!response.ok) throw new Error('Error fetching institutions');
+      return await response.json();
+    } catch (error) {
+      this.handleError(error);
+      return [];
+    }
   }
 
   listCompanies(companies) {
-    if (
-      this.empresasDropdownTarget.getElementsByTagName("option").length === 0
-    ) {
-      companies.forEach((company) => {
-        this.empresasDropdownTarget.innerHTML += `<option value="${company.id}">${company.name}</option>`;
-      });
+    this.empresasDropdownTarget.innerHTML = '';
+    let options = '';
+    companies.forEach((company) => {
+      options += `<option value="${company.id}">${company.name}</option>`;
+    });
+    this.empresasDropdownTarget.innerHTML = options;
+    // Restore selection
+    const savedEmpresa = localStorage.getItem('selectedEmpresa');
+    if (savedEmpresa) {
+      this.empresasDropdownTarget.value = savedEmpresa;
     }
   }
 
   listInstitutions(institutions) {
-    if (
-      this.institucionDropdownTarget.getElementsByTagName("option").length === 0
-    ) {
-      institutions.forEach((institution) => {
-        this.institucionDropdownTarget.innerHTML += `<option value="${institution.id}">${institution.name}</option>`;
-      });
+    this.institucionDropdownTarget.innerHTML = '';
+    let options = '';
+    institutions.forEach((institution) => {
+      options += `<option value="${institution.id}">${institution.name}</option>`;
+    });
+    this.institucionDropdownTarget.innerHTML = options;
+    // Restore selection
+    const savedInstitucion = localStorage.getItem('selectedInstitucion');
+    if (savedInstitucion) {
+      this.institucionDropdownTarget.value = savedInstitucion;
     }
   }
 
@@ -158,11 +204,12 @@ export default class DashboardController extends Controller {
 
   makeFilesCards(files) {
     this.FeedTarget.innerHTML = "";
+    let cards = '';
     files.forEach((file) => {
-      this.FeedTarget.innerHTML += `
+      cards += `
         <div class="col-md-4 mb-4">
-          <div class="card">
-            <h5 class="card-header">#<span id="id-file">${file.id}</span> - ${file.name}</h5>
+          <div class="card" data-file-id="${file.id}">
+            <h5 class="card-header">#<span class="id-file">${file.id}</span> - ${file.name}</h5>
             <div class="card-body">
               <h5 class="card-title">${file.file_type}</h5>
               <p class="card-text">${file.updated_at}</p>
@@ -172,15 +219,17 @@ export default class DashboardController extends Controller {
         </div>
       `;
     });
+    this.FeedTarget.innerHTML = cards;
   }
 
   makeFolderFilesCards(folderFiles) {
     this.FeedTarget.innerHTML = "";
+    let cards = '';
     folderFiles.forEach((file) => {
-      this.FeedTarget.innerHTML += `
+      cards += `
         <div class="col-md-4 mb-4">
-          <div class="card">
-            <h5 class="card-header">#<span id="id-file">${file.id}</span> - ${file.name}</h5>
+          <div class="card" data-folder-id="${file.id}">
+            <h5 class="card-header">#<span class="id-file">${file.id}</span> - ${file.name}</h5>
             <div class="card-body">
               <h5 class="card-title">Cantidad: ${file.size}</h5>
               <p class="card-text">${file.updated_at}</p>
@@ -190,6 +239,7 @@ export default class DashboardController extends Controller {
         </div>
       `;
     });
+    this.FeedTarget.innerHTML = cards;
   }
 
   logout() {
@@ -206,9 +256,7 @@ export default class DashboardController extends Controller {
         this.buildDashboard(data);
       },
     );
-    bootstrap.Modal.getInstance(
-      document.getElementById("empresasModal"),
-    ).hide();
+    this.hideModal("empresasModal");
   }
 
   changeInstitucion(event) {
@@ -220,15 +268,13 @@ export default class DashboardController extends Controller {
         this.buildDashboard(data);
       },
     );
-    bootstrap.Modal.getInstance(
-      document.getElementById("institucionModal"),
-    ).hide();
+    this.hideModal("institucionModal");
   }
 
   downloadFile(event) {
     const button = event.currentTarget;
     const card = button.closest(".card");
-    const id = card.querySelector("#id-file").textContent;
+    const id = card.querySelector(".id-file").textContent;
 
     // Show loading animation
     const loading = document.createElement("div");
@@ -263,11 +309,31 @@ export default class DashboardController extends Controller {
 
         window.URL.revokeObjectURL(url);
       })
-      .catch((error) => console.error("Error downloading file:", error))
+      .catch((error) => this.handleError(error))
       .finally(() => {
         // Remove loading animation
         button.disabled = false;
         if (loading.parentNode) loading.parentNode.removeChild(loading);
       });
+  }
+
+  getHeaders() {
+    return {
+      Authorization: `Bearer ${this.token}`,
+      "Content-Type": "application/json",
+    };
+  }
+
+  hideModal(modalId) {
+    const modalEl = document.getElementById(modalId);
+    if (modalEl) {
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+    }
+  }
+
+  handleError(error) {
+    console.error(error);
+    alert(error.message || 'An error occurred');
   }
 }
