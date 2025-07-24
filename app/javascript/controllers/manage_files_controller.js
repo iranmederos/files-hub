@@ -1,52 +1,56 @@
 import { Controller } from "@hotwired/stimulus"
+import { getClaims, checkLogin } from "../helpers/utils_functions";
 
 export default class ManageFilesController extends Controller {
     static targets = [
         "bodyTable",
         "addForm",
         "editForm",
-        "deleteForm",
-        "companyDropdown",
-        "institutionDropdown",
-        "institutionDropdownEdit",
-        "institutionDropdownAdd"
-    ]
+        "deleteForm"
+    ];
 
     API_URL = "api/v1/company_file/";
+    API_INSTITUTION_URL = "api/v1/institution";
 
     connect() {
-        if (!localStorage.getItem('token') || !localStorage.getItem('id')) {
-            alert('No estás logueado');
-            window.location.href = '/';
-        }
-
+        checkLogin();
         this.token = localStorage.getItem('token');
-        this.id = localStorage.getItem('id');
-        this.idDelete = 0;
-
+        this.claims = getClaims(this.token);
+        this.selectedFileId = null;
         this.init();
     }
 
     async init() {
-        await this.fillBodyTable();
-
-        this.addFormTarget.addEventListener('submit', this.addFile.bind(this));
-        this.editFormTarget.addEventListener('submit', this.editFile.bind(this));
-        this.deleteFormTarget.addEventListener('submit', this.deleteFile.bind(this));
+        try {
+            await this.fillBodyTable();
+            this.addFormTarget.addEventListener('submit', this.addFile.bind(this));
+            this.editFormTarget.addEventListener('submit', this.editFile.bind(this));
+            this.deleteFormTarget.addEventListener('submit', this.deleteFile.bind(this));
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     async fillBodyTable() {
-        //this must be change to findByFolder
-        let folderId = localStorage.getItem('folderId');
-        const files = await this.getFilesByFolder(folderId);
-        this.listFiles(files);
+        try {
+            let folderId = localStorage.getItem('folderId');
+            const files = await this.getFilesByFolder(folderId);
+            this.listFiles(files);
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     listFiles(files) {
         this.bodyTableTarget.innerHTML = '';
+        if (!files.length) {
+            this.bodyTableTarget.innerHTML = '<tr><td colspan="6">No files found.</td></tr>';
+            return;
+        }
+        let rows = '';
         files.forEach(file => {
-            this.bodyTableTarget.innerHTML += `
-                <tr>
+            rows += `
+                <tr data-file-id="${file.id}">
                     <td>${file.id}</td>
                     <td>${file.name}</td>
                     <td>${file.file_type}</td>
@@ -54,73 +58,36 @@ export default class ManageFilesController extends Controller {
                     <td>${file.updated_at}</td>
                     <td>
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalEdit" data-action="click->manage-files#getDataForEditModal">Editar</button>
+                            data-bs-target="#fileModalEdit" data-action="click->manage-files#getDataForEditModal" data-file-id="${file.id}">Editar</button>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#fileModalDelete" data-action="click->manage-files#getIdFromTable">Eliminar</button>
+                            data-bs-target="#fileModalDelete" data-action="click->manage-files#getIdFromTable" data-file-id="${file.id}">Eliminar</button>
                     </td>
                 </tr>
             `;
         });
+        this.bodyTableTarget.innerHTML = rows;
     }
 
     async getFilesByFolder(folderId) {
-        const url = this.API_URL + `index_by?folder_file_id=${folderId}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-                'Content-Type': 'application/json'
-            }
-        });
-        return await response.json();
-    }
-
-    async getFilesByCompanyAndInstitution(company, institution) {
-        const url = this.API_URL + `index_by?company_id=${company}&institution_id=${institution}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-                'Content-Type': 'application/json'
-            }
-        });
-        return await response.json();
-    }
-
-    async getInstitutions() {
-        const url = this.API_INSTITUTION_URL;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-                'Content-Type': 'application/json'
-            }
-        });
-        return await response.json();
-    }
-
-    listInstitutions(institutions, dropdown) {
-        if (dropdown.getElementsByTagName('option').length === 0) {
-            institutions.forEach(institution => {
-                dropdown.innerHTML += `
-                    <option value="${institution.id}">${institution.name}</option>
-                `;
+        try {
+            const url = this.API_URL + `index_by?folder_file_id=${folderId}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: this.getHeaders()
             });
+            if (!response.ok) throw new Error('Error fetching files');
+            return await response.json();
+        } catch (error) {
+            this.handleError(error);
+            return [];
         }
-    }
-
-    async fillInstitutionsDropdown() {
-        const institutions = await this.getInstitutions();
-        this.listInstitutions(institutions, this.institutionDropdownTarget);
-        this.listInstitutions(institutions, this.institutionDropdownEditTarget);
-        this.listInstitutions(institutions, this.institutionDropdownAddTarget);
     }
 
     getDataForEditModal(event) {
         const button = event.currentTarget;
+        const fileId = button.getAttribute('data-file-id');
         const row = button.closest('tr');
-
-        document.getElementById('fileIdEdit').value = row.cells[0].textContent;
+        document.getElementById('fileIdEdit').value = fileId;
         document.getElementById('fileNameEdit').value = row.cells[1].textContent;
         document.getElementById('typeEdit').value = row.cells[2].textContent;
         document.getElementById('institutionDropdownEdit').value = row.cells[3].textContent;
@@ -128,15 +95,13 @@ export default class ManageFilesController extends Controller {
 
     getIdFromTable(event) {
         const button = event.currentTarget;
-        const row = button.parentElement.parentElement;
-        this.idDelete = row.cells[0].textContent;
+        const fileId = button.getAttribute('data-file-id');
+        this.selectedFileId = fileId;
     }
 
     async addFile(event) {
         event.preventDefault();
-
         const button = this.addFormTarget.querySelector('button[type="submit"]');
-        // Show loading animation
         const loading = document.createElement("div");
         loading.className = "spinner-border text-secondary";
         loading.role = "status";
@@ -155,13 +120,17 @@ export default class ManageFilesController extends Controller {
         if (fileInput.files.length > 0) {
             formData.append('company_file[file]', fileInput.files[0]);
         }
-
-        await this.postAddFile(formData);
-
-        this.addFormTarget.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalAdd'));
-        modal.hide();
-        window.location.reload();
+        try {
+            await this.postAddFile(formData);
+            this.addFormTarget.reset();
+            this.hideModal('fileModalAdd');
+            await this.fillBodyTable();
+        } catch (error) {
+            this.handleError(error);
+        } finally {
+            button.disabled = false;
+            if (button.contains(loading)) button.removeChild(loading);
+        }
     }
 
     async postAddFile(formData) {
@@ -173,64 +142,78 @@ export default class ManageFilesController extends Controller {
             },
             body: formData
         });
+        if (!response.ok) throw new Error('Error adding file');
         return await response.json();
     }
 
     async editFile(event) {
         event.preventDefault();
-
         const file = {
             name: this.editFormTarget.fileNameEdit.value,
             file_type: this.editFormTarget.typeEdit.value,
-            institution_id: this.editFormTarget.institutionDropdownEdit.value
+            folder_file_id: localStorage.getItem('folderId')
         };
         const id = this.editFormTarget.fileIdEdit.value;
-
-        await this.putEditFile(file, id);
-
-        this.editFormTarget.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalEdit'));
-        modal.hide();
-        window.location.reload();
+        try {
+            await this.putEditFile(file, id);
+            this.editFormTarget.reset();
+            this.hideModal('fileModalEdit');
+            await this.fillBodyTable();
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     async putEditFile(file, id) {
         const url = this.API_URL + `${id}`;
         const response = await fetch(url, {
             method: 'PUT',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-                'Content-Type': 'application/json'
-            },
+            headers: this.getHeaders(),
             body: JSON.stringify(file)
         });
+        if (!response.ok) throw new Error('Error editing file');
         return await response.json();
     }
 
     async deleteFile(event) {
         event.preventDefault();
-        await this.requestDeleteFile(this.idDelete);
-        const modal = bootstrap.Modal.getInstance(document.getElementById('fileModalDelete'));
-        modal.hide();
-        window.location.reload();
+        try {
+            await this.requestDeleteFile(this.selectedFileId);
+            this.hideModal('fileModalDelete');
+            await this.fillBodyTable();
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     async requestDeleteFile(id) {
         const url = this.API_URL + `${id}`;
         const response = await fetch(url, {
             method: 'DELETE',
-            headers: {
-                'Authorization': 'Bearer ' + this.token,
-                'Content-Type': 'application/json'
-            }
+            headers: this.getHeaders()
         });
+        if (!response.ok) throw new Error('Error deleting file');
+        return await response.text();
+    }
 
-        if (response.ok) {
-            const message = await response.text();
-            console.log(message); // "Resource Deleted Successfully"
-        } else {
-            const error = await response.text();
-            console.error(error); // Handle the error message
+    getHeaders() {
+        return {
+            'Authorization': 'Bearer ' + this.token,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    hideModal(modalId) {
+        const modalEl = document.getElementById(modalId);
+        if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
         }
+    }
+
+    handleError(error) {
+        // Centralized error handler
+        console.error(error);
+        alert(error.message || 'An error occurred');
     }
 }
