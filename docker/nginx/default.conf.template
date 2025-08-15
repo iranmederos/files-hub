@@ -2,6 +2,8 @@ server {
     listen ${TOP_LEVEL_PORT};
     server_name api.localhost api${APPS_SUFFIX}.${TOP_LEVEL_DOMAIN};
 
+    client_max_body_size 100M;
+    
     location / {
         proxy_pass http://api:3000;
         proxy_set_header Host $http_host;

@@ -27,6 +27,7 @@
   </button>
   <div class="content-wrapper d-flex">
     <!-- Sidebar for md and up -->
+
     <div class="sidebar p-3 text-bg-dark d-none d-md-block" style="width: 280px;">
       <%= image_tag 'logo.jpg', alt: 'logo', width: '50%', style: 'border-radius: 10px;' %>
       <hr>
@@ -54,6 +55,7 @@
         </ul>
       </div>
     </div>
+
     <!-- Offcanvas sidebar for small screens -->
     <div class="offcanvas offcanvas-start d-md-none text-bg-dark" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel" style="width: 240px;">
       <div class="offcanvas-header border-bottom">
@@ -62,14 +64,14 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body p-3">
-        <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="adminMenu">
+        <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="adminMenuMobile">
           <li><a href="#" class="nav-link active" data-bs-toggle="modal" data-bs-target="#empresasModal"><i class="bi bi-building me-2"></i>Empresas asociadas</a></li>
           <li><a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#institucionModal"><i class="bi bi-bank me-2"></i>Cambiar institución</a></li>
           <li><a href="<%= manage_folders_path %>" class="nav-link text-white"><i class="bi bi-file-earmark me-2"></i>Gestionar archivos</a></li>
           <li><a href="<%= manage_users_path %>" class="nav-link text-white"><i class="bi bi-people me-2"></i>Gestionar usuarios</a></li>
           <li><a href="<%= manage_companies_path %>" class="nav-link text-white"><i class="bi bi-buildings me-2"></i>Gestionar empresas</a></li>
         </ul>
-        <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="clientMenu">
+        <ul class="nav nav-pills flex-column mb-auto" data-dashboard-target="clientMenuMobile">
           <li><a href="#" class="nav-link active" data-bs-toggle="modal" data-bs-target="#empresasModal"><i class="bi bi-building me-2"></i>Empresas asociadas</a></li>
           <li><a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#institucionModal"><i class="bi bi-bank me-2"></i>Cambiar institución</a></li>
         </ul>
@@ -87,6 +89,7 @@
         </div>
       </div>
     </div>
+
   <div class="container-fluid">
     <nav class="navbar navbar-light bg-light border-bottom">
       <div class="container-fluid">

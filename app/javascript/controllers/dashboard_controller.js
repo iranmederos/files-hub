@@ -11,6 +11,8 @@ export default class DashboardController extends Controller {
     "adminMenu",
     "clientMenu",
     "backButton",
+    "adminMenuMobile",
+    "clientMenuMobile",
   ];
 
   connect() {
@@ -31,9 +33,13 @@ export default class DashboardController extends Controller {
     if (this.claims.roles === "admin") {
       this.adminMenuTarget.style.display = "block";
       this.clientMenuTarget.style.display = "none";
-    } else {
+      this.adminMenuMobileTarget.style.display = "block";
+      this.clientMenuMobileTarget.style.display = "none";
+    } else if (this.claims.roles === "client") {
       this.adminMenuTarget.style.display = "none";
       this.clientMenuTarget.style.display = "block";
+      this.adminMenuMobileTarget.style.display = "none";
+      this.clientMenuMobileTarget.style.display = "block";
     }
   }
 
