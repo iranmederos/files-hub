@@ -1,18 +1,18 @@
-admin_email = "dashboard@example.com"
-admin_password = "dashboard"
+admin_email = "admin@example.com"
+admin_password = "admin"
 client_email = "client@example.com"
 client_password = "client"
 
 if !Role.exists?
   Role.create!([
-    { name: "dashboard" },
+    { name: "admin" },
     { name: "client" }
   ])
-  admin_role = Role.find_or_create_by!(name: "dashboard")
+  admin_role = Role.find_or_create_by!(name: "admin")
   client_role = Role.find_or_create_by!(name: "client")
 end
 
-unless User.exists?(email: "dashboard@example.com") && User.exists?(email: "client@example.com")
+unless User.exists?(email: "admin@example.com") && User.exists?(email: "client@example.com")
   User.find_or_create_by!(email: admin_email) do |user|
     user.password = admin_password
     user.password_confirmation = admin_password
